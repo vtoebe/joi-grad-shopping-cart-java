@@ -12,27 +12,15 @@ public class ShoppingCart {
         this.products = products;
     }
 
-    public void addProduct(Product product) {
-        products.add(product);
-    }
-
     public Order checkout() {
         double totalPrice = 0;
-
         int loyaltyPointsEarned = 0;
-        for (Product product : products) {
-            double discount = 0;
-            if (product.getProductCode().startsWith("DIS_10")) {
-                discount = (product.getPrice() * 0.1);
-                loyaltyPointsEarned += (product.getPrice() / 10);
-            } else if (product.getProductCode().startsWith("DIS_15")) {
-                discount = (product.getPrice() * 0.15);
-                loyaltyPointsEarned += (product.getPrice() / 15);
-            } else {
-                loyaltyPointsEarned += (product.getPrice() / 5);
-            }
 
-            totalPrice += product.getPrice() - discount;
+        for (Product product : products) {
+            loyaltyPointsEarned += product.getDiscount() == 0
+                            ? (product.getPrice() / 5)
+                            : (product.getPrice() / product.getDiscount());
+            totalPrice += product.getPrice() - product.getDiscount();
         }
 
         return new Order(totalPrice, loyaltyPointsEarned);
